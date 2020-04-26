@@ -22,7 +22,9 @@ hello = HelloAsync.new
 print '> '
 while (input = gets)
   case input
-  when /^[qQxX]/ then puts 'Quitting...' && exit(0)
+  when /^[qQxX]/
+    puts 'Quitting...'
+    exit(0)
   when /^l(ist)?/ then puts "Currently have #{Thread.list.count} threads."
   when /^async/ then hello.async.hello
   when /^await/ then hello.await.hello
@@ -33,6 +35,3 @@ while (input = gets)
 
   print '> '
 end
-
-puts 'Quitting..'
-
