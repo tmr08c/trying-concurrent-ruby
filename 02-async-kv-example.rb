@@ -8,8 +8,9 @@ end
 
 require 'concurrent'
 
-# Note: we cannot replicate Elixir's exapmle exactly in having the public API
-# call a private function with `call` or `cast` interally. From the docs:
+# Note: we cannot replicate Elixir's example exactly in having the public API
+# call a private function with `call` or `cast` interally. From the
+# [docs](http://ruby-concurrency.github.io/concurrent-ruby/master/Concurrent/Async.html):
 #
 # > External method calls should always use the async and await proxy methods.
 # When one method calls another method, the async proxy should rarely be used
@@ -58,6 +59,14 @@ class ShoppingList
   def all
     @list
   end
+
+  # Format list in a user-friendly way
+  # @return [String]
+  def readable
+    @list.each_with_object("My List\n\n") do |(item, count), output|
+      output << "* #{item} - #{count}"
+    end
+  end
 end
 
 shopping_list = ShoppingList.new
@@ -68,8 +77,13 @@ while (input = gets)
   when /^[qQxX]/
     puts 'Quitting...'
     exit(0)
-  when /^l(ist)?/ then puts "Currently have #{Thread.list.count} threads."
-  when /^async/ then hello.async.hello
+  when /^l(ist)?/
+    puts shopping_list.await.readable.value
+  when /^add (?<item>\D+)(?<count>\d+)/
+    item = Regexp.last_match[:item]
+    count = Regexp.last_match[:count]
+    puts "Adding: #{count} #{item}"
+    shopping_list.async.put(item, count)
   when /^await/ then hello.await.hello
   when /^new-async/ then HelloAsync.new.async.hello
   when /^new-await/ then HelloAsync.new.await.hello
