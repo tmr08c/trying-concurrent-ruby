@@ -62,8 +62,9 @@ class ShoppingList
 
   # Format list in a user-friendly way
   # @return [String]
+  # @todo this should probably be outside of the class so we instaed to Printer.print(list.await.all.value)
   def readable
-    @list.each_with_object("My List\n\n") do |(item, count), output|
+    @list.each_with_object(String.new("My List\n\n")) do |(item, count), output|
       output << "* #{item} - #{count}"
     end
   end
